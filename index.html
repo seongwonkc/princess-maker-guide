@@ -252,6 +252,37 @@ footer .reset{color:var(--rose);text-decoration:underline;font-size:.8rem;margin
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(90px);background:var(--ink);color:var(--cream);padding:10px 20px;border-radius:99px;font-size:.88rem;z-index:60;transition:transform .3s;max-width:88vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
+/* ---------- 오프닝 ---------- */
+#splash{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;
+  background:radial-gradient(125% 95% at 50% 18%, #5B3E5C 0%, #3a2b3d 55%, #2A2333 100%);
+  transition:opacity .75s ease}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .sp-stars{position:absolute;inset:0;z-index:1}
+.sp-star{position:absolute;border-radius:50%;background:var(--gold);opacity:0;box-shadow:0 0 6px rgba(217,164,65,.7);animation:spTwinkle var(--d,3s) ease-in-out var(--dl,0s) infinite}
+.sp-inner{position:relative;z-index:2;text-align:center;padding:24px;max-width:92vw}
+.sp-crown{width:88px;height:88px;image-rendering:pixelated;opacity:0;transform:translateY(20px) scale(.7);
+  animation:spCrown .9s cubic-bezier(.16,1,.3,1) .25s forwards, spFloat 3.6s ease-in-out 1.4s infinite}
+.sp-l1{color:var(--cream);font-size:1.08rem;letter-spacing:.02em;margin-top:20px;opacity:0;animation:spRise .85s ease .75s forwards}
+.sp-name{font-size:3rem;font-weight:800;letter-spacing:.05em;margin:2px 0 6px;line-height:1.12;opacity:0;
+  background:linear-gradient(100deg,#D9A441 18%,#FBF6EC 50%,#D9A441 82%);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  animation:spRise .85s ease 1.15s forwards, spShine 3s linear 2s infinite}
+.sp-l3{color:var(--cream);font-size:1.4rem;font-weight:700;opacity:0;animation:spRise .85s ease 1.65s forwards}
+.sp-enter{margin-top:28px;padding:11px 26px;border-radius:99px;font-weight:800;font-size:.95rem;
+  background:var(--gold);color:#3a2b3d;box-shadow:0 4px 16px rgba(217,164,65,.4);opacity:0;
+  animation:spRise .8s ease 2.35s forwards}
+.sp-enter:active{transform:translateY(1px)}
+.sp-hint{color:rgba(245,237,224,.55);font-size:.78rem;margin-top:14px;opacity:0;animation:spRise .8s ease 2.7s forwards}
+@keyframes spCrown{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes spFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spShine{to{background-position:220% 0}}
+@keyframes spTwinkle{0%,100%{opacity:0;transform:translateY(0) scale(.6)}50%{opacity:.95;transform:translateY(-10px) scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  .sp-crown,.sp-l1,.sp-name,.sp-l3,.sp-enter,.sp-hint{animation-duration:.01s;animation-delay:0s;opacity:1}
+  .sp-crown{transform:none}.sp-star{animation:none;opacity:.7}
+}
+
 @media (min-width:560px){
   .hero h1{font-size:1.7rem}
   .slot{max-width:170px}
@@ -261,6 +292,19 @@ footer .reset{color:var(--rose);text-decoration:underline;font-size:.8rem;margin
 </style>
 </head>
 <body>
+
+<!-- 오프닝 -->
+<div id="splash" aria-hidden="true">
+  <div class="sp-stars" id="spStars"></div>
+  <div class="sp-inner">
+    <img id="splashCrown" class="sp-crown" src="" alt="">
+    <div class="sp-l1">내 프린세스는</div>
+    <div class="sp-name">허지원</div>
+    <div class="sp-l3">너 뿐이야.</div>
+    <button class="sp-enter" id="splashEnter">수첩 열기 ♥</button>
+    <div class="sp-hint">아무 데나 탭하면 들어가요</div>
+  </div>
+</div>
 
 <!-- 런 슬롯 바 -->
 <div class="runbar">
@@ -866,6 +910,20 @@ function renderAll(){
 }
 renderPartners();
 renderAll();
+
+/* ===================== 오프닝 ===================== */
+(function initSplash(){
+  const sp=document.getElementById('splash'); if(!sp) return;
+  const crown=document.getElementById('splashCrown'); if(crown) crown.src=STEPS[3].icon;
+  const box=document.getElementById('spStars');
+  if(box){ let h=''; for(let i=0;i<28;i++){ const x=Math.random()*100,y=Math.random()*100,d=2.4+Math.random()*2.8,dl=Math.random()*3.2,s=2+Math.random()*3; h+='<span class="sp-star" style="left:'+x+'%;top:'+y+'%;width:'+s+'px;height:'+s+'px;--d:'+d+'s;--dl:'+dl+'s"></span>'; } box.innerHTML=h; }
+  document.body.style.overflow='hidden';
+  let closed=false;
+  function close(){ if(closed) return; closed=true; sp.classList.add('hide'); document.body.style.overflow=''; setTimeout(()=>{ sp.style.display='none'; },800); }
+  sp.addEventListener('click',close);
+  const btn=document.getElementById('splashEnter');
+  if(btn) btn.addEventListener('click',e=>{ e.stopPropagation(); close(); });
+})();
 </script>
 </body>
 </html>
